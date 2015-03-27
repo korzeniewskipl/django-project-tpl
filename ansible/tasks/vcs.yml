@@ -1,0 +1,9 @@
+# vim: ft=ansible
+---
+
+- name: Install VCS
+  apt: name={{ item }}
+  with_items:
+    - git
+    - mercurial
+    - subversion

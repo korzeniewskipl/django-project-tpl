@@ -1,0 +1,61 @@
+Django==1.11.1
+
+
+#################
+# DJANGO ADDONS #
+#################
+
+django-crispy-forms==1.6.1
+django-extensions==1.7.9
+django-filter==1.0.2
+django-guardian==1.4.8
+django-model-utils==3.0.0
+
+
+############
+# DATABASE #
+############
+
+psycopg2==2.7.1
+
+
+#######
+# API #
+#######
+
+djangorestframework==3.6.3
+
+
+############
+# CHANNELS #
+############
+
+channels==1.1.3
+asgi-redis==1.3.0
+
+
+#########
+# TOOLS #
+#########
+
+ipython==5.1.0
+Markdown==2.6.7
+sqlparse==0.1.19
+
+
+#############
+# DEV TOOLS #
+#############
+
+django-debug-panel
+django-debug-toolbar
+pip-tools
+
+# Debuggers
+ipdb
+remote-pdb
+
+# Linters
+pycodestyle
+pyflakes
+pylint

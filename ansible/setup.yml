@@ -1,0 +1,80 @@
+# vim: ft=ansible
+---
+
+- hosts: dbservers
+  become: yes
+  become_method: sudo
+
+  roles:
+    - role: ANXS.postgresql
+      postgresql_version: 9.5
+      postgresql_databases:
+        - name: vagrant
+          owner: vagrant
+          hstore: yes
+      postgresql_users:
+        - name: vagrant
+          pass: vagrant
+          encrypted: no
+      postgresql_user_privileges:
+        - name: vagrant
+          db: vagrant
+          priv: "ALL"
+          role_attr_flags: "CREATEDB"
+      postgresql_listen_addresses:
+        - "*"
+      postgresql_pg_hba_trust_hosts:
+        - "192.168.33.0/24"
+
+  tasks:
+    - name: Install Redis
+      apt: name=redis-server
+
+
+- hosts: appservers
+  become: yes
+  become_method: sudo
+
+  roles:
+    - korzeniewskipl.pillow-prerequisites
+
+  tasks:
+    - include: tasks/python.yml
+    - include: tasks/vcs.yml
+
+    - name: Install libraries and headers
+      apt: name={{ item }}
+      with_items:
+        - gettext
+        - gettext-lint
+        - graphviz
+        - libgraphviz-dev
+        - libxml2-dev
+        - libxslt-dev
+        - openjdk-7-jre
+        - postgresql-server-dev-9.5
+        - sudo
+
+    - name: Install JS tools
+      apt: name={{ item }}
+      with_items:
+        - nodejs
+        - nodejs-legacy
+        - npm
+
+    - name: Install node tools
+      npm: name={{ item.name }} version={{ item.version }} global=yes
+      with_items:
+        - {name: gulp-cli, version: 3.9.1}
+        - {name: yo, version: 1.8.5}
+
+    - name: Install packages from package.json
+      npm: state=present
+
+    - name: Install pip requirements
+      become_user: vagrant
+      pip:
+        chdir: "/home/vagrant/src"
+        requirements: "application/requirements/dev.txt"
+        virtualenv: "/home/vagrant/venv"
+        virtualenv_python: python3
